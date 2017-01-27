@@ -149,7 +149,7 @@ function create() {
   mirror.hover(mirrorBeginHover, mirrorEndHover);
   mirror.click(mirrorOnClick);
 
-  goal = s.rect(375, 143, 14, 14).attr({fill:"red", stroke:"black"});
+  goal = s.rect(368, 143, 14, 14).attr({fill:"red", stroke:"black"});
   character = s.circle(100, 150, 7).attr({fill:"blue", stroke:"black"});
 }
 

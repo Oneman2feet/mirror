@@ -3,6 +3,8 @@ var fps = 60;
 var rect;
 
 var character
+var track
+var dAlongTrack
 var goal
 
 /*
@@ -76,6 +78,38 @@ class Vector {
 EVENTS
 */
 
+function lineString(line) {
+  return "M" + line.attr("x1") + "," + line.attr("y1")
+    + "L" + line.attr("x2") + "," + line.attr("y2");
+}
+
+function moveLine(direction) {
+  // get track (using check intersection, for now assume it's the only track)
+  var point = Snap.path.getPointAtLength(lineString(track), dAlongTrack);
+  point = new Vector(point.x, point.y);
+  var characterPos = new Vector(character.attr("cx"), character.attr("cy"));
+  if (Vector.diff(point, characterPos).magnitude < 0.01) {
+    dAlongTrack += direction;
+    if (dAlongTrack < 0) dAlongTrack = 0;
+    var newPoint = Snap.path.getPointAtLength(lineString(track), dAlongTrack);
+    newPoint = new Vector(newPoint.x, newPoint.y);
+    character.attr({cx: newPoint.x, cy: newPoint.y});
+  }
+}
+
+window.onkeydown = function(e) {
+  switch (e.keyCode) {
+    case 37: // LEFT
+      moveLine(-1);
+      break;
+    case 39: // RIGHT
+      moveLine(1);
+      break;
+    default:
+      break;
+  }
+}
+
 function mirrorBeginHover() {
   this.attr({"stroke-width": 4})
 }
@@ -109,6 +143,7 @@ function create() {
   rect = s.node.getBoundingClientRect();
 
   track = s.line(25, 150, 150, 150).attr({stroke:"black"});
+  dAlongTrack = 75;
 
   mirror = s.line(200, 50, 200, 250).attr({stroke:"green"});
   mirror.hover(mirrorBeginHover, mirrorEndHover);
